@@ -394,20 +394,20 @@
             
             .stats {
                 flex-direction: column;
-                gap: 8px;
-                padding: 10px;
+                gap: 6px;
+                padding: 8px;
                 min-width: auto;
                 width: 90%;
-                margin: 10px auto;
-                font-size: 16px;
+                margin: 8px auto;
+                font-size: 14px;
             }
             
             .stats div {
-                font-size: 16px;
+                font-size: 14px;
             }
 
             .stats-value {
-                font-size: 18px;
+                font-size: 16px;
             }
 
             .game-container {
@@ -418,14 +418,14 @@
             .game-stats {
                 width: 90%;
                 min-width: auto;
-                margin: 10px auto;
-                padding: 12px 8px;
+                margin: 8px auto;
+                padding: 10px 6px;
             }
 
             .level-meters {
                 flex-direction: column;
-                gap: 12px;
-                padding: 8px;
+                gap: 10px;
+                padding: 6px;
             }
 
             .meter {
@@ -444,6 +444,14 @@
             
             button {
                 width: 100%;
+            }
+
+            .meter-label {
+                font-size: 14px;
+            }
+
+            .meter-label span {
+                font-size: 14px;
             }
         }
     </style>
@@ -1561,7 +1569,7 @@
         // Helper function to generate feedback message
         function getFeedbackMessage(reachedGoal, stabilityRatio, gameState) {
             if (reachedGoal) {
-                return "Well done! You've mastered the balance between power and stability. Your cannon performed admirably under pressure.";
+                return "Well done! You've mastered the balance between power and stability. You've proven that true power comes from a stable foundation!";
             }
             
             // If didn't reach goal, provide constructive criticism
