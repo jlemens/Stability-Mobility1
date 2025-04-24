@@ -394,13 +394,22 @@
             
             .stats {
                 flex-direction: column;
-                gap: 10px;
-                padding: 15px;
+                gap: 8px;
+                padding: 10px;
                 min-width: auto;
                 width: 90%;
                 margin: 10px auto;
+                font-size: 16px;
             }
             
+            .stats div {
+                font-size: 16px;
+            }
+
+            .stats-value {
+                font-size: 18px;
+            }
+
             .game-container {
                 flex-direction: column;
                 width: 100%;
@@ -410,13 +419,13 @@
                 width: 90%;
                 min-width: auto;
                 margin: 10px auto;
-                padding: 15px 10px;
+                padding: 12px 8px;
             }
 
             .level-meters {
                 flex-direction: column;
-                gap: 15px;
-                padding: 10px;
+                gap: 12px;
+                padding: 8px;
             }
 
             .meter {
@@ -1561,7 +1570,7 @@
             if (stabilityRatio < 0.8) {
                 message += "Your downfall was prioritizing power over stability. Remember: A stable foundation is crucial for generating power. Try building up your stability before increasing power next time.";
             } else if (gameState.powerLevel <= 3) {
-                message += "You played it too safe with power. While stability is important, you need to take some risks with power to reach the goal. Build stability first, then gradually increase power.";
+                message += "You played it too safe with power! Although stability is important, we need power in order to mobalize the cannonball. Try balancing your power with your stability improvements.";
             } else if (gameState.stabilityLevel <= 2) {
                 message += "Your cannon was too unstable to handle the power. Start by building a strong stability foundation before adding power.";
             } else {
