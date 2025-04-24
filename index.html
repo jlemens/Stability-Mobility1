@@ -423,8 +423,10 @@
             }
 
             .level-meters {
-                flex-direction: column;
-                gap: 10px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto auto;
+                gap: 8px;
                 padding: 6px;
             }
 
@@ -432,11 +434,20 @@
                 width: 100%;
             }
 
+            .meter:last-child {
+                grid-column: 1 / -1;  /* Make recoil meter span both columns */
+            }
+
             .meter-bars {
                 justify-content: center;
-                gap: 5px;
+                gap: 3px;
             }
-            
+
+            .meter-bar {
+                width: 15px;
+                height: 25px;
+            }
+
             .controls {
                 margin: 10px auto;
                 width: 90%;
@@ -453,6 +464,43 @@
             .meter-label span {
                 font-size: 14px;
             }
+
+            .modal {
+                max-height: 90vh;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;  /* Smooth scrolling for iOS */
+                margin: 20px;
+                width: 90%;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            #gameOverModal {
+                padding-bottom: 20px;  /* Extra padding to ensure button is visible */
+            }
+
+            .feedback-bullet {
+                font-size: 14px;
+                margin: 8px 0;
+            }
+        }
+
+        /* Ensure overlay covers full screen */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 998;
+        }
+
+        /* Ensure modal stays on top */
+        .modal {
+            z-index: 999;
         }
     </style>
 </head>
