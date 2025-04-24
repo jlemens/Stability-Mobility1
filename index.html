@@ -398,6 +398,7 @@
                 padding: 15px;
                 min-width: auto;
                 width: 90%;
+                margin: 10px auto;
             }
             
             .game-container {
@@ -409,6 +410,22 @@
                 width: 90%;
                 min-width: auto;
                 margin: 10px auto;
+                padding: 15px 10px;
+            }
+
+            .level-meters {
+                flex-direction: column;
+                gap: 15px;
+                padding: 10px;
+            }
+
+            .meter {
+                width: 100%;
+            }
+
+            .meter-bars {
+                justify-content: center;
+                gap: 5px;
             }
             
             .controls {
@@ -419,30 +436,6 @@
             button {
                 width: 100%;
             }
-        }
-
-        .rotation-tip {
-            display: none;
-            position: fixed;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(52, 152, 219, 0.95);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            z-index: 1000;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            animation: fadeInOut 3s ease-in-out;
-            font-size: 14px;
-        }
-
-        @keyframes fadeInOut {
-            0% { opacity: 0; }
-            20% { opacity: 1; }
-            80% { opacity: 1; }
-            100% { opacity: 0; }
         }
     </style>
 </head>
@@ -1577,31 +1570,6 @@
             
             return message;
         }
-
-        // Add rotation tip div
-        const rotationTip = document.createElement('div');
-        rotationTip.className = 'rotation-tip';
-        rotationTip.innerHTML = '📱 Tip: Rotate your device for the best experience!';
-        document.body.appendChild(rotationTip);
-
-        // Check orientation and show/hide tip
-        function checkOrientation() {
-            if (window.innerWidth < window.innerHeight && window.innerWidth < 1000) {
-                rotationTip.style.display = 'block';
-                setTimeout(() => {
-                    rotationTip.style.display = 'none';
-                }, 3000);
-            } else {
-                rotationTip.style.display = 'none';
-            }
-        }
-
-        // Listen for orientation changes
-        window.addEventListener('resize', checkOrientation);
-        window.addEventListener('orientationchange', checkOrientation);
-        
-        // Initial check
-        checkOrientation();
 
         // Initialize game
         updateUI();
