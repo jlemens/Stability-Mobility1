@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<!-- Test update to existing file -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CannonCraft: Stability Before Mobility</title>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EFR49BC29B"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-EFR49BC29B');
+    </script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            font-size: 48px;
+            color: #2c3e50;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            padding: 20px 40px;
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .catchphrase {
+            font-size: 20px;
+            color: #34495e;
+            text-align: center;
+            margin-bottom: 30px;
+            font-style: italic;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .instructions {
+            background: linear-gradient(135deg, #ffffff, #f8f8f8);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            max-width: 800px;
+            text-align: left;
+            border: 1px solid #eee;
+        }
+        .instructions h2 {
+            color: #2c3e50;
+            margin-top: 0;
+            font-size: 28px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .instructions ul {
+            margin: 0;
+            padding-left: 25px;
+        }
+        .instructions li {
+            margin: 12px 0;
+            line-height: 1.5;
+            font-size: 16px;
+            color: #34495e;
+        }
+        .instructions li strong {
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        .game-container {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .game-stats {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin: 20px;
+            width: auto;
+            min-width: 600px;
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-left: 20px;
+        }
+        .goal-marker {
+            position: absolute;
+            color: #ff4444;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+        }
+        #gameCanvas {
+            border: 2px solid #333;
+            background-color: #87CEEB;
+            margin-bottom: 20px;
+        }
+        .stats {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 20px;
+            font-size: 24px;
+            background: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .stats-value {
+            color: #3498db;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        .stats-value.animate {
+            transform: scale(1.2);
+            color: #2ecc71;
+        }
+        .goal-zone {
+            position: absolute;
+            background: linear-gradient(180deg, rgba(255,68,68,0.1) 0%, rgba(255,68,68,0.2) 100%);
+            border-left: 2px dashed #ff4444;
+            border-right: 2px dashed #ff4444;
+            height: 100%;
+            width: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 10px;
+        }
+        .goal-box {
+            background: linear-gradient(45deg, #ff4444, #ff6b6b);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(255,68,68,0.3);
+            position: absolute;
+            top: 20px;
+            transform-origin: center;
+            animation: pulseGoal 2s infinite;
+        }
+        @keyframes pulseGoal {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            animation: floatCloud linear infinite;
+        }
+        @keyframes floatCloud {
+            from { transform: translateX(1000px); }
+            to { transform: translateX(-200px); }
+        }
+        .goal-text {
+            background: #ff4444;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .upgrade-buttons {
+            display: none;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            text-align: center;
+            min-width: 300px;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            backdrop-filter: blur(3px);
+        }
+        .achievement {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f8f8f8;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
+        .level-meters {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 15px;
+            justify-content: space-between;
+        }
+        .meter {
+            flex: 1;
+            text-align: center;
+        }
+        .meter-label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .meter-bars {
+            display: flex;
+            gap: 3px;
+            justify-content: center;
+        }
+        .meter-bar {
+            width: 20px;
+            height: 30px;
+            background: #ddd;
+            border-radius: 3px;
+            transition: background-color 0.3s ease;
+        }
+        .meter-bar.active {
+            background: linear-gradient(to bottom, #4CAF50, #45a049);
+        }
+        .stability-bar.active {
+            background: linear-gradient(to bottom, #2196F3, #1976D2);
+        }
+        .gunpowder-bar.active {
+            background: linear-gradient(to bottom, #FF5722, #E64A19);
+        }
+        .recoil-meter {
+            margin-top: 10px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-align: center;
+            background: #f0f0f0;
+        }
+        .recoil-low {
+            color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+        .recoil-medium {
+            color: #FF9800;
+            background: rgba(255, 152, 0, 0.1);
+        }
+        .recoil-high {
+            color: #f44336;
+            background: rgba(244, 67, 54, 0.1);
+        }
+        .feedback-message {
+            margin-top: 15px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            text-align: center;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .feedback-stable {
+            color: #2e7d32;
+            background: #f1f8e9;
+            border-color: #c5e1a5;
+        }
+        
+        .feedback-warning {
+            color: #e65100;
+            background: #fff3e0;
+            border-color: #ffcc80;
+        }
+        
+        .feedback-danger {
+            color: #c62828;
+            background: #ffebee;
+            border-color: #ef9a9a;
+        }
+        .modal {
+            background: linear-gradient(to bottom, #ffffff, #f8f8f8);
+            padding: 25px 35px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        
+        .feedback-bullet {
+            display: block;
+            margin: 12px 0;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .feedback-bullet:first-child {
+            margin-top: 0;
+        }
+        
+        .feedback-bullet:last-child {
+            margin-bottom: 15px;
+        }
+        
+        #feedbackText {
+            text-align: left;
+        }
+
+        @keyframes pulseButton {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        #fireButton {
+            animation: pulseButton 1.5s ease-in-out infinite;
+            background: linear-gradient(to bottom right, #ff4444, #ff6b6b);
+            box-shadow: 0 4px 15px rgba(255,68,68,0.3);
+            font-size: 18px;
+            padding: 12px 30px;
+            transition: all 0.3s ease;
+        }
+
+        #fireButton:hover {
+            transform: scale(1.1) !important;
+            background: linear-gradient(to bottom right, #ff6b6b, #ff8484);
+            box-shadow: 0 6px 20px rgba(255,68,68,0.4);
+        }
+
+        @media screen and (max-width: 1000px) {
+            body {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 36px;
+                padding: 15px 25px;
+            }
+            
+            .catchphrase {
+                font-size: 16px;
+            }
+            
+            #gameCanvas {
+                width: 100%;
+                height: auto;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+                padding: 15px;
+                min-width: auto;
+                width: 90%;
+            }
+            
+            .game-container {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .game-stats {
+                width: 90%;
+                min-width: auto;
+                margin: 10px auto;
+            }
+            
+            .controls {
+                margin: 10px auto;
+                width: 90%;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+
+        .rotation-tip {
+            display: none;
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(52, 152, 219, 0.95);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: fadeInOut 3s ease-in-out;
+            font-size: 14px;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <h1>🎯 CannonCraft</h1>
+    <div class="catchphrase">Master Stability, Unlock Mobility</div>
+    
+    <div class="instructions">
+        <h2>🎯 How to Play</h2>
+        <ul>
+            <li><strong>Goal:</strong> Reach the 200-yard mark in 8 rounds.</li>
+            <li><strong>Upgrades:</strong> Earn an upgrade point after each round! Use them to improve your cannon's power (mobility) and stability (control).</li>
+            <li><strong>Strategy:</strong> Balance is key. High power with low stability can be risky. Remember: power (mobility) is dependent on stability.</li>
+        </ul>
+    </div>
+
+    <div class="stats">
+        <div>Round <span id="round" class="stats-value">1</span>/8</div>
+        <div>Distance <span id="distance" class="stats-value">0</span> yards</div>
+        <div>Upgrade Points <span id="upgradePoints" class="stats-value">0</span></div>
+    </div>
+
+    <canvas id="gameCanvas" width="1000" height="400"></canvas>
+
+    <div class="game-container">
+        <div class="game-stats">
+            <div class="level-meters">
+                <div class="meter">
+                    <div class="meter-label">
+                        <span>🛡️ Stability</span>
+                        <span id="stabilityLevel">1/6</span>
+                    </div>
+                    <div class="meter-bars" id="stabilityBars">
+                        <div class="meter-bar stability-bar"></div>
+                        <div class="meter-bar stability-bar"></div>
+                        <div class="meter-bar stability-bar"></div>
+                        <div class="meter-bar stability-bar"></div>
+                        <div class="meter-bar stability-bar"></div>
+                        <div class="meter-bar stability-bar"></div>
+                    </div>
+                </div>
+                <div class="meter">
+                    <div class="meter-label">
+                        <span>🚀 Power (Mobility)</span>
+                        <span id="gunpowderLevel">1/7</span>
+                    </div>
+                    <div class="meter-bars" id="gunpowderBars">
+                        <div class="meter-bar gunpowder-bar"></div>
+                        <div class="meter-bar gunpowder-bar"></div>
+                        <div class="meter-bar gunpowder-bar"></div>
+                        <div class="meter-bar gunpowder-bar"></div>
+                        <div class="meter-bar gunpowder-bar"></div>
+                        <div class="meter-bar gunpowder-bar"></div>
+                        <div class="meter-bar gunpowder-bar"></div>
+                    </div>
+                </div>
+                <div class="meter">
+                    <div class="meter-label">
+                        <span>↩️ Recoil</span>
+                    </div>
+                    <div id="recoilMeter" class="recoil-meter recoil-low">
+                        Low
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="fireButton" style="display: none;">🔥 Fire Cannon! 💨</button>
+            <div class="upgrade-buttons" id="upgradeButtons">
+                <button id="stabilityButton">🛡️ Improve Stability</button>
+                <button id="powerButton">🚀 Improve Power (Mobility)</button>
+            </div>
+            <div class="feedback-message" id="feedbackMessage"></div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="modal" id="feedbackModal">
+        <h2>Round Results</h2>
+        <p id="feedbackText"></p>
+        <button id="continueButton">Continue</button>
+    </div>
+    <div class="modal" id="gameOverModal">
+        <h2>Game Over!</h2>
+        <div id="finalStats"></div>
+        <div class="achievement" id="achievements"></div>
+        <button id="restartButton">Play Again</button>
+    </div>
+
+    <script>
+        // Game constants
+        const CANVAS_WIDTH = 1000;
+        const CANVAS_HEIGHT = 400;
+        const GOAL_DISTANCE = 200; // yards
+        const MAX_FIELD_DISTANCE = 240; // Maximum visible distance on field
+        const FIELD_START_X = 120; // Increased space for recoil observation
+        const UPGRADE_DISTANCE = 50;
+        const MAX_MOVES = 8;  // Updated to 8 rounds
+        const PIXELS_PER_YARD = 3.4; // Adjusted for 240 yards max
+
+        // Game state
+        let gameState = {
+            round: 1,
+            distance: 0,
+            previousDistance: 0,
+            maxDistance: 0,
+            upgradePoints: 0,
+            freeRounds: 5,
+            stabilityLevel: 1,
+            powerLevel: 1,
+            isAnimating: false,
+            gameOver: false,
+            cannonExploded: false,
+            cannonParts: []
+        };
+
+        // Get DOM elements
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const fireButton = document.getElementById('fireButton');
+        const upgradeButtons = document.getElementById('upgradeButtons');
+        const stabilityButton = document.getElementById('stabilityButton');
+        const powerButton = document.getElementById('powerButton');
+        const overlay = document.getElementById('overlay');
+        const feedbackModal = document.getElementById('feedbackModal');
+        const gameOverModal = document.getElementById('gameOverModal');
+        const feedbackText = document.getElementById('feedbackText');
+        const continueButton = document.getElementById('continueButton');
+        const restartButton = document.getElementById('restartButton');
+
+        // Cannon properties
+        let cannon = {
+            x: FIELD_START_X - 30,
+            y: CANVAS_HEIGHT - 62,  // Set to 62 pixels from bottom
+            width: 40,
+            height: 20,
+            angle: Math.PI / 4,
+            recoil: 0,
+            baseWidth: 60,
+            baseHeight: 30,
+            wheelRadius: 8,
+            barrelOffsetY: -10
+        };
+
+        // Cannonball properties
+        let cannonball = {
+            x: cannon.x + Math.cos(-cannon.angle) * cannon.width,
+            y: cannon.y + Math.sin(-cannon.angle) * cannon.width,
+            visible: false
+        };
+
+        // Add explosion particles system
+        let explosionParticles = [];
+
+        function createExplosionParticles() {
+            explosionParticles = [];
+            for (let i = 0; i < 50; i++) {
+                explosionParticles.push({
+                    x: cannon.x,
+                    y: cannon.y,
+                    velocityX: (Math.random() - 0.5) * 20,
+                    velocityY: (Math.random() - 0.5) * 20,
+                    size: Math.random() * 8 + 2,
+                    life: 1,
+                    color: ['#ff4444', '#ff8f00', '#ffeb3b'][Math.floor(Math.random() * 3)]
+                });
+            }
+        }
+
+        function updateExplosionParticles() {
+            for (let i = explosionParticles.length - 1; i >= 0; i--) {
+                const particle = explosionParticles[i];
+                particle.x += particle.velocityX;
+                particle.y += particle.velocityY;
+                particle.velocityY += 0.5; // Gravity
+                particle.life -= 0.02;
+                
+                if (particle.life <= 0) {
+                    explosionParticles.splice(i, 1);
+                }
+            }
+        }
+
+        function drawExplosionParticles() {
+            for (const particle of explosionParticles) {
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, particle.size * particle.life, 0, Math.PI * 2);
+                ctx.fillStyle = particle.color + Math.floor(particle.life * 255).toString(16).padStart(2, '0');
+                ctx.fill();
+            }
+        }
+
+        // Color schemes based on upgrades
+        function getCannonColors() {
+            return {
+                barrel: `rgb(${120 + gameState.powerLevel * 15}, ${110 + gameState.powerLevel * 15}, ${100 + gameState.powerLevel * 10})`,
+                base: `rgb(${130 + gameState.stabilityLevel * 15}, ${120 + gameState.stabilityLevel * 15}, ${110 + gameState.stabilityLevel * 10})`
+            };
+        }
+
+        // Update UI elements
+        function updateUI() {
+            document.getElementById('round').textContent = gameState.round;
+            document.getElementById('distance').textContent = Math.round(gameState.distance);
+            document.getElementById('upgradePoints').textContent = gameState.upgradePoints;
+            
+            // Update level displays
+            document.getElementById('stabilityLevel').textContent = `${gameState.stabilityLevel}/6`;
+            document.getElementById('gunpowderLevel').textContent = `${gameState.powerLevel}/7`;
+            
+            // Update meters
+            const stabilityBars = document.querySelectorAll('.stability-bar');
+            stabilityBars.forEach((bar, index) => {
+                bar.classList.toggle('active', index < Math.min(gameState.stabilityLevel, 6));
+            });
+            
+            const gunpowderBars = document.querySelectorAll('.gunpowder-bar');
+            gunpowderBars.forEach((bar, index) => {
+                bar.classList.toggle('active', index < gameState.powerLevel);
+            });
+            
+            // Show/hide buttons based on upgrade points
+            const hasUpgradePoints = gameState.upgradePoints > 0;
+            fireButton.style.display = hasUpgradePoints ? 'none' : 'block';
+            upgradeButtons.style.display = hasUpgradePoints ? 'flex' : 'none';
+            
+            // Update button states
+            stabilityButton.disabled = gameState.stabilityLevel >= 6;
+            powerButton.disabled = gameState.powerLevel >= 7;
+
+            updateRecoilMeter();
+
+            // Add brief feedback based on recoil and level differences
+            const recoilAmount = calculateRecoil(gameState.powerLevel, gameState.stabilityLevel);
+            const feedbackMessage = document.getElementById('feedbackMessage');
+            const levelDifference = gameState.powerLevel - gameState.stabilityLevel;
+            
+            // Remove all existing classes
+            feedbackMessage.className = 'feedback-message';
+            
+            // Determine feedback based on level difference first, then recoil
+            if (levelDifference >= 3) {
+                feedbackMessage.textContent = "⚠️ The cannon is getting unstable due to low stability";
+                feedbackMessage.classList.add('feedback-danger');
+            } else if (levelDifference >= 2) {
+                feedbackMessage.textContent = "⚠️ The cannon is getting unstable due to low stability";
+                feedbackMessage.classList.add('feedback-danger');
+            } else if (levelDifference >= 1) {
+                feedbackMessage.textContent = "💡 The cannon could use some stability";
+                feedbackMessage.classList.add('feedback-warning');
+            } else {
+                // If levels are balanced, use recoil-based feedback
+                if (recoilAmount >= 2.5) {
+                    feedbackMessage.textContent = "⚠️ The cannon is getting unstable due to low stability";
+                    feedbackMessage.classList.add('feedback-danger');
+                } else if (recoilAmount >= 1.5) {
+                    feedbackMessage.textContent = "💡 The cannon could use some stability";
+                    feedbackMessage.classList.add('feedback-warning');
+                } else {
+                    feedbackMessage.textContent = "🎯 Looking steady and strong";
+                    feedbackMessage.classList.add('feedback-stable');
+                }
+            }
+        }
+
+        // Draw cannon with base and wheels
+        function drawCannon() {
+            const colors = getCannonColors();
+            ctx.save();
+            ctx.translate(cannon.x + cannon.recoil, cannon.y);
+
+            // Draw wheels with new positioning logic
+            ctx.fillStyle = '#333';
+            const wheelPositions = [];
+            const wheelRadius = cannon.wheelRadius * 1.3;
+            
+            // Fixed outer wheel positions
+            const leftWheelX = -cannon.baseWidth/2;
+            const rightWheelX = cannon.baseWidth/2;
+            const middleZone = rightWheelX - leftWheelX;  // Total space between outer wheels
+            
+            // Always add the outer wheels
+            wheelPositions.push(leftWheelX);
+            wheelPositions.push(rightWheelX);
+            
+            // Add middle wheels based on stability level
+            if (gameState.stabilityLevel >= 3) {
+                // First middle wheel (1/3 of the way from left)
+                wheelPositions.push(leftWheelX + (middleZone / 3));
+            }
+            if (gameState.stabilityLevel >= 4) {
+                // Second middle wheel (2/3 of the way from left)
+                wheelPositions.push(leftWheelX + (2 * middleZone / 3));
+            }
+            
+            // Sort wheel positions from left to right
+            wheelPositions.sort((a, b) => a - b);
+
+            // Draw each wheel with enhanced detail
+            wheelPositions.forEach(x => {
+                // Wheel outline with metallic gradient
+                const wheelGradient = ctx.createRadialGradient(x, cannon.baseHeight/2, 0, x, cannon.baseHeight/2, wheelRadius);
+                wheelGradient.addColorStop(0, '#666');
+                wheelGradient.addColorStop(0.7, '#444');
+                wheelGradient.addColorStop(1, '#333');
+                
+                ctx.beginPath();
+                ctx.arc(x, cannon.baseHeight/2, wheelRadius, 0, Math.PI * 2);
+                ctx.fillStyle = wheelGradient;
+                ctx.fill();
+                
+                // Wheel hub with metallic effect
+                ctx.strokeStyle = '#888';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(x, cannon.baseHeight/2, wheelRadius * 0.6, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Enhanced wheel spokes
+                ctx.strokeStyle = '#777';
+                ctx.lineWidth = 2.5;
+                for (let i = 0; i < 6; i++) {
+                    const angle = (i / 6) * Math.PI * 2;
+                    ctx.beginPath();
+                    ctx.moveTo(x, cannon.baseHeight/2);
+                    ctx.lineTo(
+                        x + Math.cos(angle) * wheelRadius * 0.9,
+                        cannon.baseHeight/2 + Math.sin(angle) * wheelRadius * 0.9
+                    );
+                    ctx.stroke();
+                }
+            });
+
+            // Draw trapezoid base with shadow and details
+            ctx.shadowColor = 'rgba(0,0,0,0.3)';
+            ctx.shadowBlur = 5;
+            ctx.shadowOffsetY = 3;
+            
+            // Main base (trapezoid) - centered over wheels
+            const baseTopWidth = cannon.baseWidth * 0.8;
+            const baseBottomWidth = cannon.baseWidth;
+            const baseHeight = cannon.baseHeight;
+            
+            // Calculate base offset to center over wheels
+            const baseOffset = (leftWheelX + rightWheelX) / 2;
+            
+            ctx.beginPath();
+            ctx.moveTo(baseOffset - baseTopWidth/2, -baseHeight/2);
+            ctx.lineTo(baseOffset + baseTopWidth/2, -baseHeight/2);
+            ctx.lineTo(baseOffset + baseBottomWidth/2, baseHeight/2);
+            ctx.lineTo(baseOffset - baseBottomWidth/2, baseHeight/2);
+            ctx.closePath();
+            
+            const baseGradient = ctx.createLinearGradient(0, -baseHeight/2, 0, baseHeight/2);
+            baseGradient.addColorStop(0, colors.base);
+            baseGradient.addColorStop(1, '#333');
+            ctx.fillStyle = baseGradient;
+            ctx.fill();
+
+            // Add stability level indicators (support bars) - adjust for offset
+            for (let i = 1; i < gameState.stabilityLevel; i++) {
+                const x = baseOffset - baseTopWidth/2 + (i * baseTopWidth/(gameState.stabilityLevel));
+                ctx.beginPath();
+                ctx.moveTo(x, -baseHeight/2);
+                ctx.lineTo(x, baseHeight/2);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+
+            // Draw barrel with gradient and power indicators
+            ctx.translate(0, cannon.barrelOffsetY);
+            ctx.rotate(-cannon.angle);
+            const barrelGradient = ctx.createLinearGradient(
+                -cannon.width/2, -cannon.height/2,
+                -cannon.width/2, cannon.height/2
+            );
+            barrelGradient.addColorStop(0, colors.barrel);
+            barrelGradient.addColorStop(0.5, '#444');
+            barrelGradient.addColorStop(1, colors.barrel);
+            
+            ctx.fillStyle = barrelGradient;
+            ctx.fillRect(-cannon.width/2, -cannon.height/2, cannon.width, cannon.height);
+            
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(-cannon.width/2, -cannon.height/2, cannon.width, cannon.height);
+            
+            // Draw barrel end cap
+            ctx.beginPath();
+            ctx.arc(cannon.width/2 - cannon.height/2, 0, cannon.height/2, -Math.PI/2, Math.PI/2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Add power level indicators (red circles)
+            const powerDotRadius = 3;
+            for (let i = 1; i < gameState.powerLevel; i++) {
+                const dotX = -cannon.width/2 + (i * cannon.width/(gameState.powerLevel + 1));
+                ctx.beginPath();
+                ctx.arc(dotX, 0, powerDotRadius, 0, Math.PI * 2);
+                ctx.fillStyle = '#ff4444';
+                ctx.fill();
+                ctx.strokeStyle = '#aa0000';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+
+            ctx.restore();
+        }
+
+        // Animate the cannonball shot
+        function animateShot(targetDistance) {
+            const startX = cannon.x + Math.cos(-cannon.angle) * cannon.width;
+            const startY = cannon.y + Math.sin(-cannon.angle) * cannon.width;
+            const targetX = FIELD_START_X + (targetDistance * PIXELS_PER_YARD);
+            const duration = 1500; // 1.5 seconds for full animation
+            const startTime = Date.now();
+            
+            gameState.isAnimating = true;
+            cannonball.visible = true;
+            cannonball.x = startX;
+            cannonball.y = startY;
+            
+            function animate() {
+                const currentTime = Date.now();
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Ensure exact distance by using FIELD_START_X as reference
+                cannonball.x = FIELD_START_X + (targetDistance * PIXELS_PER_YARD * progress);
+                
+                // Calculate height using sine wave for arc
+                const arcHeight = 200;
+                const heightProgress = Math.sin(progress * Math.PI);
+                cannonball.y = startY - (arcHeight * heightProgress);
+                
+                // When landing, keep the ball on the ground
+                if (progress === 1) {
+                    cannonball.y = CANVAS_HEIGHT - 55; // Just above ground level
+                }
+                
+                // Animate cannon recoil
+                if (progress < 0.2) {
+                    // Initial recoil
+                    const recoilAmount = calculateRecoil(gameState.powerLevel, gameState.stabilityLevel);
+                    cannon.recoil = -recoilAmount * 20 * (1 - progress / 0.2);
+                } else if (progress < 0.5) {
+                    // Recovery with wobble
+                    const recoilAmount = calculateRecoil(gameState.powerLevel, gameState.stabilityLevel);
+                    const wobbleProgress = (progress - 0.2) / 0.3;
+                    const wobble = Math.sin(wobbleProgress * Math.PI * 4) * recoilAmount * 5;
+                    cannon.recoil = wobble;
+                } else {
+                    // Reset recoil
+                    cannon.recoil = 0;
+                }
+                
+                draw();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    // Animation complete but keep cannonball visible
+                    gameState.isAnimating = false;
+                    
+                    // Ensure final position is exact
+                    cannonball.x = FIELD_START_X + (targetDistance * PIXELS_PER_YARD);
+                    draw();
+                    
+                    // Show feedback after a short delay
+                    setTimeout(showFeedback, 500);
+                }
+            }
+            
+            animate();
+        }
+
+        // Draw landing marker
+        function drawLandingMarker(x, y) {
+            ctx.save();
+            
+            // Draw impact circle
+            ctx.beginPath();
+            ctx.arc(x, y - 5, 8, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
+            ctx.fill();
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Draw crosshair
+            ctx.beginPath();
+            ctx.moveTo(x - 12, y - 5);
+            ctx.lineTo(x + 12, y - 5);
+            ctx.moveTo(x, y - 17);
+            ctx.lineTo(x, y + 7);
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+
+        // Draw game elements
+        function draw() {
+            // Clear canvas
+            ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+            // Draw sky gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT - 50);
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(1, '#E0F6FF');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT - 50);
+
+            // Update and draw clouds
+            updateClouds();
+            drawClouds();
+
+            // Draw ground with texture
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(0, CANVAS_HEIGHT - 50, CANVAS_WIDTH, 50);
+            
+            // Add ground texture
+            ctx.save();
+            for (let x = 0; x < CANVAS_WIDTH; x += 30) {
+                ctx.beginPath();
+                ctx.moveTo(x, CANVAS_HEIGHT - 50);
+                ctx.lineTo(x + 15, CANVAS_HEIGHT - 45);
+                ctx.strokeStyle = 'rgba(139, 69, 19, 0.5)';
+                ctx.stroke();
+            }
+            ctx.restore();
+
+            // Draw goal zone
+            const goalX = FIELD_START_X + (GOAL_DISTANCE * PIXELS_PER_YARD);
+            
+            // Draw goal zone gradient
+            const goalGradient = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT - 50);
+            goalGradient.addColorStop(0, 'rgba(255,68,68,0.1)');
+            goalGradient.addColorStop(1, 'rgba(255,68,68,0.2)');
+            ctx.fillStyle = goalGradient;
+            ctx.fillRect(goalX - 20, 0, 40, CANVAS_HEIGHT - 50);
+            
+            // Draw goal box
+            ctx.save();
+            ctx.translate(goalX, 40);
+            const time = Date.now() * 0.002;
+            const scale = 1 + Math.sin(time) * 0.05;
+            ctx.scale(scale, scale);
+            
+            // Draw goal box background
+            ctx.fillStyle = '#ff4444';
+            ctx.shadowColor = 'rgba(255,68,68,0.3)';
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.roundRect(-40, -25, 80, 50, 10);
+            ctx.fill();
+            
+            // Draw goal text
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 20px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('GOAL', 0, 0);
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText('200y', 0, 20);
+            ctx.restore();
+
+            // Draw distance markers every 20 yards
+            ctx.fillStyle = '#000';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            for (let i = 0; i <= MAX_FIELD_DISTANCE; i += 20) {
+                const x = FIELD_START_X + (i * PIXELS_PER_YARD);
+                ctx.fillText(`${i}`, x, CANVAS_HEIGHT - 10);
+                ctx.beginPath();
+                ctx.moveTo(x, CANVAS_HEIGHT - 55);
+                ctx.lineTo(x, CANVAS_HEIGHT - 45);
+                ctx.stroke();
+
+                // Add small ticks every 10 yards if not on a 20-yard mark
+                if (i < MAX_FIELD_DISTANCE) {
+                    const midX = x + (10 * PIXELS_PER_YARD);
+                    ctx.beginPath();
+                    ctx.moveTo(midX, CANVAS_HEIGHT - 52);
+                    ctx.lineTo(midX, CANVAS_HEIGHT - 48);
+                    ctx.stroke();
+                }
+            }
+
+            // Draw previous distance marker
+            drawPreviousMarker();
+
+            // Draw explosion particles if they exist
+            if (explosionParticles.length > 0) {
+                drawExplosionParticles();
+            }
+
+            // Draw cannon parts if exploded
+            if (gameState.cannonExploded && gameState.cannonParts.length > 0) {
+                drawCannonParts();
+            } else if (!gameState.cannonExploded) {
+                drawCannon();
+            }
+
+            // Always draw cannonball if visible
+            if (cannonball.visible) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(cannonball.x, cannonball.y, 5, 0, Math.PI * 2);
+                ctx.fillStyle = '#000';
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Calculate total shot distance with special combinations
+        function calculateTotalDistance(powerLevel, stabilityLevel) {
+            const baseDistance = getGunpowderBaseDistance(powerLevel);
+            const stabilityMultiplier = getStabilityMultiplier(stabilityLevel);
+            let totalDistance = baseDistance * stabilityMultiplier;
+
+            // Special combination 1: Level 5 stability + Level 4 gunpowder = 230 yards
+            if (stabilityLevel === 5 && powerLevel === 4) {
+                return 230;
+            }
+            
+            // Special combination 2: Level 4 stability + Level 5 gunpowder = 190 yards
+            if (stabilityLevel === 4 && powerLevel === 5) {
+                return 190;
+            }
+
+            return totalDistance;
+        }
+
+        // Calculate base gunpowder distance
+        function getGunpowderBaseDistance(powerLevel) {
+            // Simple calculation: level × 10 yards
+            return powerLevel * 10;
+        }
+
+        // Calculate stability multiplier
+        function getStabilityMultiplier(stabilityLevel) {
+            // Direct multiplier: level = multiplier
+            return Math.min(stabilityLevel, 6); // Cap at level 6
+        }
+
+        // Calculate recoil amount
+        function calculateRecoil(powerLevel, stabilityLevel) {
+            // Add 1.2 for each gunpowder level, subtract 1 for each stability level
+            const recoil = (powerLevel * 1.2) - stabilityLevel;
+            
+            // Ensure there's always at least a small amount of recoil (0.2)
+            return Math.max(0.2, recoil);
+        }
+
+        // Update fireCannon function
+        function fireCannon() {
+            if (gameState.isAnimating || gameState.gameOver) return;
+
+            const recoilAmount = calculateRecoil(gameState.powerLevel, gameState.stabilityLevel);
+            
+            if (recoilAmount >= 3.7) {
+                gameState.cannonExploded = true;
+                gameState.gameOver = true;
+                createExplosionParticles();
+                createCannonParts();
+                
+                // Start animation loop for explosion
+                function animateExplosion() {
+                    if (!gameState.cannonExploded) return;
+                    
+                    updateExplosionParticles();
+                    updateCannonParts();
+                    draw();
+                    
+                    if (explosionParticles.length > 0 || gameState.cannonParts.length > 0) {
+                        requestAnimationFrame(animateExplosion);
+                    }
+                }
+                
+                animateExplosion();
+                return;
+            }
+
+            const totalDistance = calculateTotalDistance(gameState.powerLevel, gameState.stabilityLevel);
+            gameState.previousDistance = gameState.distance;
+            gameState.distance = totalDistance;
+            gameState.maxDistance = Math.max(gameState.maxDistance, totalDistance);
+
+            animateShot(totalDistance);
+        }
+
+        // Reset cannon position
+        function resetCannonPosition() {
+            cannon.recoil = 0;
+            cannon.y = CANVAS_HEIGHT - 62;  // Match new 62 pixel height
+            cannon.angle = Math.PI / 4;
+            cannonball.visible = false;
+            draw();
+        }
+
+        // Show feedback
+        function showFeedback() {
+            const currentDistance = Math.round(gameState.distance);
+            let feedback = `<span class="feedback-bullet">🎯 Distance: ${currentDistance} yards</span>`;
+            
+            if (gameState.previousDistance > 0) {
+                const difference = currentDistance - gameState.previousDistance;
+                const emoji = difference >= 0 ? '📈' : '📉';
+                feedback += `<span class="feedback-bullet">${emoji} ${Math.abs(difference)} yards ${difference >= 0 ? 'further' : 'shorter'}</span>`;
+            }
+
+            feedback += `<span class="feedback-bullet">✨ Round complete</span>`;
+
+            feedbackText.innerHTML = feedback;  // Using innerHTML to render HTML
+            overlay.style.display = 'block';
+            feedbackModal.style.display = 'block';
+            
+            // Animate the distance counter
+            animateValue('distance');
+            
+            updateUI();
+            updateRecoilMeter();
+        }
+
+        // Reset game state
+        function resetGame() {
+            // Clear any ongoing animations
+            gameState.cannonExploded = false;
+            gameState.gameOver = false;
+            explosionParticles = [];
+            gameState.cannonParts = [];
+            
+            // Reset game state
+            gameState = {
+                round: 1,
+                distance: 0,
+                previousDistance: 0,
+                maxDistance: 0,
+                upgradePoints: 0,
+                freeRounds: 5,
+                stabilityLevel: 1,
+                powerLevel: 1,
+                isAnimating: false,
+                gameOver: false,
+                cannonExploded: false,
+                cannonParts: []
+            };
+            
+            // Reset visual elements
+            cannonball.visible = false;
+            resetCannonPosition();
+            
+            // Reset UI elements
+            gameOverModal.style.display = 'none';
+            feedbackModal.style.display = 'none';
+            overlay.style.display = 'none';
+            
+            // Reset button states
+            continueButton.textContent = "Continue";
+            restartButton.style.backgroundColor = '#4CAF50';
+            
+            // Update UI and redraw
+            updateUI();
+            updateRecoilMeter();
+            draw();
+        }
+
+        // Show explosion feedback
+        function showExplosionFeedback() {
+            if (gameOverModal.style.display === 'block') return; // Prevent multiple popups
+            
+            const finalStats = document.getElementById('finalStats');
+            const achievements = document.getElementById('achievements');
+            
+            let statsHtml = `
+                <h2 style="color: #ff4444; margin-bottom: 20px;">💥 BOOM! The Cannon Exploded!</h2>
+                <p style="font-size: 18px; margin-bottom: 20px;">Your cannon couldn't handle the recoil!</p>
+                <div style="background: #f8f8f8; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <p style="font-weight: bold; margin-bottom: 10px;">Final Stats:</p>
+                    <p>Distance Reached: <span class="stats-value">${Math.round(gameState.distance)}</span> yards</p>
+                    <p>Stability Level: <span class="stats-value">${gameState.stabilityLevel}/6</span></p>
+                    <p>Power Level: <span class="stats-value">${gameState.powerLevel}/7</span></p>
+                </div>
+            `;
+            
+            let achievementsHtml = `
+                <div style="background: #fff3e0; padding: 15px; border-radius: 10px;">
+                    <h3 style="color: #ff9800; margin-bottom: 15px;">💡 Tips for Next Time</h3>
+                    <p style="margin-bottom: 8px;">• Keep your recoil under control by balancing power with stability</p>
+                    <p style="margin-bottom: 8px;">• Each stability level helps handle one power level</p>
+                    <p style="margin-bottom: 8px;">• Try upgrading stability before maxing out power</p>
+                </div>
+            `;
+            
+            finalStats.innerHTML = statsHtml;
+            achievements.innerHTML = achievementsHtml;
+            
+            // Show the modal with a slight delay for better visual effect
+            setTimeout(() => {
+                overlay.style.display = 'block';
+                gameOverModal.style.display = 'block';
+                
+                // Update restart button
+                restartButton.textContent = "Try Again";
+                restartButton.style.backgroundColor = '#4CAF50';
+                restartButton.style.fontSize = '18px';
+                restartButton.style.padding = '12px 30px';
+                restartButton.onclick = function() {
+                    gameOverModal.style.display = 'none';
+                    overlay.style.display = 'none';
+                    resetGame();
+                };
+            }, 500);
+        }
+
+        // Event listeners
+        stabilityButton.addEventListener('click', () => {
+            if (gameState.upgradePoints > 0 && gameState.stabilityLevel < 6) {
+                gameState.stabilityLevel++;
+                gameState.upgradePoints--;
+                updateUI();
+                draw();
+            }
+        });
+
+        powerButton.addEventListener('click', () => {
+            if (gameState.upgradePoints > 0) {
+                gameState.powerLevel++;
+                gameState.upgradePoints--;
+                updateUI();
+                draw();
+            }
+        });
+
+        continueButton.addEventListener('click', () => {
+            feedbackModal.style.display = 'none';
+            overlay.style.display = 'none';
+            
+            if (gameState.cannonExploded) {
+                resetGame();
+                return;
+            }
+            
+            gameState.previousDistance = gameState.distance;
+            gameState.round++;
+            
+            // Give one point per round
+            gameState.upgradePoints++;
+            
+            resetCannonPosition();
+            
+            if (gameState.round > MAX_MOVES) {
+                gameState.gameOver = true;
+                showGameCompletionSummary();
+            } else {
+                // Animate the round and points counters
+                animateValue('round');
+                animateValue('upgradePoints');
+            }
+            
+            updateUI();
+            draw();
+        });
+
+        restartButton.addEventListener('click', resetGame);
+        fireButton.addEventListener('click', fireCannon);
+
+        // Add explosion animation properties
+        function createCannonParts() {
+            const colors = getCannonColors();
+            gameState.cannonParts = [
+                // Barrel pieces
+                { x: cannon.x, y: cannon.y + cannon.barrelOffsetY, angle: -cannon.angle, vx: -3, vy: -8, va: 0.2, 
+                  width: cannon.width/2, height: cannon.height, color: colors.barrel, type: 'barrel_front' },
+                { x: cannon.x - cannon.width/4, y: cannon.y + cannon.barrelOffsetY, angle: -cannon.angle, vx: -2, vy: -6, va: -0.15, 
+                  width: cannon.width/2, height: cannon.height, color: colors.barrel, type: 'barrel_back' },
+                
+                // Base pieces
+                { x: cannon.x - cannon.baseWidth/4, y: cannon.y, angle: 0, vx: -4, vy: -5, va: 0.1, 
+                  width: cannon.baseWidth/2, height: cannon.baseHeight, color: colors.base, type: 'base_left' },
+                { x: cannon.x + cannon.baseWidth/4, y: cannon.y, angle: 0, vx: 4, vy: -7, va: -0.1, 
+                  width: cannon.baseWidth/2, height: cannon.baseHeight, color: colors.base, type: 'base_right' },
+                
+                // Wheels (create one for each current wheel)
+                ...Array.from({ length: Math.min(gameState.stabilityLevel + 1, 4) }, (_, i) => ({
+                    x: cannon.x - cannon.baseWidth/2 + (i * cannon.baseWidth/(Math.min(gameState.stabilityLevel, 3))),
+                    y: cannon.y + cannon.baseHeight/2,
+                    angle: 0,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: -Math.random() * 10,
+                    va: (Math.random() - 0.5) * 0.4,
+                    radius: cannon.wheelRadius * 1.3,
+                    type: 'wheel'
+                }))
+            ].flat(); // Flatten the array since wheels are added as an array
+        }
+
+        function updateCannonParts() {
+            for (const part of gameState.cannonParts) {
+                // Update position
+                part.x += part.vx;
+                part.y += part.vy;
+                part.vy += 0.5; // gravity
+                part.angle += part.va;
+                
+                // Add some spin decay
+                part.va *= 0.99;
+                
+                // Add some horizontal velocity decay
+                part.vx *= 0.98;
+            }
+            
+            // Remove parts that have fallen below the canvas
+            gameState.cannonParts = gameState.cannonParts.filter(part => part.y < CANVAS_HEIGHT + 50);
+            
+            // If all parts have fallen, show the feedback
+            if (gameState.cannonParts.length === 0 && explosionParticles.length === 0) {
+                showExplosionFeedback();
+            }
+        }
+
+        function drawCannonParts() {
+            for (const part of gameState.cannonParts) {
+                ctx.save();
+                ctx.translate(part.x, part.y);
+                ctx.rotate(part.angle);
+                
+                if (part.type.includes('barrel')) {
+                    // Draw barrel piece with gradient
+                    const gradient = ctx.createLinearGradient(-part.width/2, -part.height/2, -part.width/2, part.height/2);
+                    gradient.addColorStop(0, part.color);
+                    gradient.addColorStop(0.5, '#444');
+                    gradient.addColorStop(1, part.color);
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(-part.width/2, -part.height/2, part.width, part.height);
+                    ctx.strokeStyle = '#333';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(-part.width/2, -part.height/2, part.width, part.height);
+                } 
+                else if (part.type.includes('base')) {
+                    // Draw base piece with gradient
+                    const gradient = ctx.createLinearGradient(0, -part.height/2, 0, part.height/2);
+                    gradient.addColorStop(0, part.color);
+                    gradient.addColorStop(1, '#333');
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.moveTo(-part.width/2, -part.height/2);
+                    ctx.lineTo(part.width/2, -part.height/2);
+                    ctx.lineTo(part.width/2, part.height/2);
+                    ctx.lineTo(-part.width/2, part.height/2);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+                }
+                else if (part.type === 'wheel') {
+                    // Draw wheel with metallic effect
+                    const wheelGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, part.radius);
+                    wheelGradient.addColorStop(0, '#666');
+                    wheelGradient.addColorStop(0.7, '#444');
+                    wheelGradient.addColorStop(1, '#333');
+                    
+                    ctx.fillStyle = wheelGradient;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, part.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Draw spokes
+                    ctx.strokeStyle = '#777';
+                    ctx.lineWidth = 2.5;
+                    for (let i = 0; i < 6; i++) {
+                        const angle = (i / 6) * Math.PI * 2;
+                        ctx.beginPath();
+                        ctx.moveTo(0, 0);
+                        ctx.lineTo(Math.cos(angle) * part.radius * 0.9, Math.sin(angle) * part.radius * 0.9);
+                        ctx.stroke();
+                    }
+                }
+                
+                ctx.restore();
+            }
+        }
+
+        // Update recoil meter display
+        function updateRecoilMeter() {
+            const recoilAmount = calculateRecoil(gameState.powerLevel, gameState.stabilityLevel);
+            const recoilMeter = document.getElementById('recoilMeter');
+            let recoilText = '';
+            let recoilClass = '';
+            
+            if (recoilAmount < 1.5) {
+                recoilText = 'Low';
+                recoilClass = 'recoil-low';
+            } else if (recoilAmount < 3) {
+                recoilText = 'Medium';
+                recoilClass = 'recoil-medium';
+            } else {
+                recoilText = 'High ⚠️';
+                recoilClass = 'recoil-high';
+            }
+            
+            recoilMeter.textContent = recoilText;
+            recoilMeter.className = `recoil-meter ${recoilClass}`;
+        }
+
+        // Draw previous distance marker
+        function drawPreviousMarker() {
+            if (gameState.previousDistance > 0) {
+                const x = FIELD_START_X + (gameState.previousDistance * PIXELS_PER_YARD);
+                ctx.save();
+                ctx.strokeStyle = 'rgba(128, 128, 128, 0.6)';
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(x, CANVAS_HEIGHT - 70);
+                ctx.lineTo(x, CANVAS_HEIGHT - 30);
+                ctx.stroke();
+                
+                ctx.fillStyle = 'rgba(128, 128, 128, 0.6)';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Previous: ${Math.round(gameState.previousDistance)}y`, x, CANVAS_HEIGHT - 75);
+                ctx.restore();
+            }
+        }
+
+        // Animate stats value
+        function animateValue(elementId) {
+            const element = document.getElementById(elementId);
+            element.classList.add('animate');
+            setTimeout(() => element.classList.remove('animate'), 500);
+        }
+
+        // Add cloud objects
+        const clouds = [
+            { x: 0, y: 50, width: 100, height: 40, speed: 30 },
+            { x: 300, y: 100, width: 150, height: 50, speed: 40 },
+            { x: 600, y: 30, width: 120, height: 45, speed: 35 },
+            { x: 800, y: 150, width: 130, height: 40, speed: 45 }
+        ];
+
+        // Update cloud animation
+        function updateClouds() {
+            for (let cloud of clouds) {
+                cloud.x -= cloud.speed * 0.1;
+                if (cloud.x < -200) {
+                    cloud.x = CANVAS_WIDTH + 100;
+                }
+            }
+        }
+
+        // Draw clouds function
+        function drawClouds() {
+            ctx.save();
+            for (let cloud of clouds) {
+                ctx.beginPath();
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.ellipse(cloud.x, cloud.y, cloud.width/2, cloud.height/2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(cloud.x - 20, cloud.y + 10, cloud.width/3, cloud.height/3, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(cloud.x + 20, cloud.y + 5, cloud.width/3, cloud.height/3, 0, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        // Show game completion summary
+        function showGameCompletionSummary() {
+            const finalStats = document.getElementById('finalStats');
+            const achievements = document.getElementById('achievements');
+            
+            // Calculate performance metrics
+            const reachedGoal = gameState.maxDistance >= GOAL_DISTANCE;
+            const stabilityRatio = gameState.stabilityLevel / gameState.powerLevel;
+            
+            let statsHtml = `
+                <h2 style="color: ${reachedGoal ? '#3498db' : '#e74c3c'}; margin-bottom: 20px;">
+                    ${reachedGoal ? '🎯 Mission Accomplished!' : '😬 Mission Failed'}
+                </h2>
+                <div style="background: #f8f8f8; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="color: #2c3e50; margin-bottom: 15px;">Final Results</h3>
+                    <p style="font-size: 18px; margin-bottom: 10px;">Distance: <span class="stats-value" style="color: ${reachedGoal ? '#2ecc71' : '#e74c3c'}">${Math.round(gameState.maxDistance)}</span> yards</p>
+                    <p style="font-size: 16px; margin-bottom: 5px;">Power Level: ${gameState.powerLevel}/7</p>
+                    <p style="font-size: 16px; margin-bottom: 5px;">Stability Level: ${gameState.stabilityLevel}/6</p>
+                </div>
+            `;
+            
+            let feedbackHtml = `
+                <div style="background: #fff3e0; padding: 20px; border-radius: 10px;">
+                    <h3 style="color: #f39c12; margin-bottom: 15px;">📝 Analysis</h3>
+                    <p style="margin-bottom: 15px; font-size: 16px;">${getFeedbackMessage(reachedGoal, stabilityRatio, gameState)}</p>
+                </div>
+            `;
+            
+            finalStats.innerHTML = statsHtml;
+            achievements.innerHTML = feedbackHtml;
+            
+            // Style the restart button
+            restartButton.textContent = "Try Again";
+            restartButton.style.backgroundColor = reachedGoal ? '#2ecc71' : '#e74c3c';
+            restartButton.style.fontSize = '20px';
+            restartButton.style.padding = '15px 40px';
+            restartButton.style.marginTop = '20px';
+            
+            // Show the modal
+            overlay.style.display = 'block';
+            gameOverModal.style.display = 'block';
+        }
+
+        // Helper function to generate feedback message
+        function getFeedbackMessage(reachedGoal, stabilityRatio, gameState) {
+            if (reachedGoal) {
+                return "Well done! You've mastered the balance between power and stability. Your cannon performed admirably under pressure.";
+            }
+            
+            // If didn't reach goal, provide constructive criticism
+            let message = "Your cannon fell short of the target. ";
+            
+            if (stabilityRatio < 0.8) {
+                message += "Your downfall was prioritizing power over stability. Remember: A stable foundation is crucial for generating power. Try building up your stability before increasing power next time.";
+            } else if (gameState.powerLevel <= 3) {
+                message += "You played it too safe with power. While stability is important, you need to take some risks with power to reach the goal. Build stability first, then gradually increase power.";
+            } else if (gameState.stabilityLevel <= 2) {
+                message += "Your cannon was too unstable to handle the power. Start by building a strong stability foundation before adding power.";
+            } else {
+                message += "You were close, but your balance of power and stability wasn't quite right. Remember: Stability enables power. Build your stability first, then gradually increase power.";
+            }
+            
+            return message;
+        }
+
+        // Add rotation tip div
+        const rotationTip = document.createElement('div');
+        rotationTip.className = 'rotation-tip';
+        rotationTip.innerHTML = '📱 Tip: Rotate your device for the best experience!';
+        document.body.appendChild(rotationTip);
+
+        // Check orientation and show/hide tip
+        function checkOrientation() {
+            if (window.innerWidth < window.innerHeight && window.innerWidth < 1000) {
+                rotationTip.style.display = 'block';
+                setTimeout(() => {
+                    rotationTip.style.display = 'none';
+                }, 3000);
+            } else {
+                rotationTip.style.display = 'none';
+            }
+        }
+
+        // Listen for orientation changes
+        window.addEventListener('resize', checkOrientation);
+        window.addEventListener('orientationchange', checkOrientation);
+        
+        // Initial check
+        checkOrientation();
+
+        // Initialize game
+        updateUI();
+        updateRecoilMeter();
+        draw();
+    </script>
+</body>
+</html> 
