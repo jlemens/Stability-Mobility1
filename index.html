@@ -1626,8 +1626,8 @@
             const stabilityRatio = gameState.stabilityLevel / gameState.powerLevel;
             
             let statsHtml = `
-                <h2 style="color: ${reachedGoal ? '#3498db' : '#e74c3c'}; margin-bottom: 20px;">
-                    ${reachedGoal ? '🎯 Mission Accomplished!' : '😬 Mission Failed'}
+                <h2 style="color: ${reachedGoal ? '#2ecc71' : '#e74c3c'}; margin-bottom: 20px;">
+                    ${reachedGoal ? '🎯 Congratulations! Mission Accomplished! 🎉' : '😔 Mission Failed'}
                 </h2>
                 <div style="background: #f8f8f8; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
                     <h3 style="color: #2c3e50; margin-bottom: 15px;">Final Results</h3>
@@ -1638,8 +1638,8 @@
             `;
             
             let feedbackHtml = `
-                <div style="background: #fff3e0; padding: 20px; border-radius: 10px;">
-                    <h3 style="color: #f39c12; margin-bottom: 15px;">📝 Analysis</h3>
+                <div style="background: ${reachedGoal ? '#e8f5e9' : '#fff3e0'}; padding: 20px; border-radius: 10px;">
+                    <h3 style="color: ${reachedGoal ? '#2e7d32' : '#f39c12'}; margin-bottom: 15px;">📝 Analysis</h3>
                     <p style="margin-bottom: 15px; font-size: 16px;">${getFeedbackMessage(reachedGoal, stabilityRatio, gameState)}</p>
                 </div>
             `;
@@ -1648,7 +1648,7 @@
             achievements.innerHTML = feedbackHtml;
             
             // Style the restart button
-            restartButton.textContent = "Try Again";
+            restartButton.textContent = "Play Again";
             restartButton.style.backgroundColor = reachedGoal ? '#2ecc71' : '#e74c3c';
             restartButton.style.fontSize = '20px';
             restartButton.style.padding = '15px 40px';
@@ -1662,20 +1662,20 @@
         // Helper function to generate feedback message
         function getFeedbackMessage(reachedGoal, stabilityRatio, gameState) {
             if (reachedGoal) {
-                return "Well done! You've mastered the balance between power and stability. You've proven that true power comes from a stable foundation!";
+                return "🌟 Well done! You've mastered the balance between power and stability. You've proven that true power comes from a stable foundation!";
             }
             
             // If didn't reach goal, provide constructive criticism
             let message = "Your cannon fell short of the target. ";
             
             if (stabilityRatio < 0.8) {
-                message += "Your downfall was prioritizing power over stability. Remember: A stable foundation is crucial for generating power. Try building up your stability before increasing power next time.";
+                message += "💥 Your downfall was prioritizing power over stability. Remember: A stable foundation is crucial for generating power. Try building up your stability before increasing power next time.";
             } else if (gameState.powerLevel <= 3) {
-                message += "You played it too safe with power! Although stability is important, we need power in order to mobalize the cannonball. Try balancing your power with your stability improvements.";
+                message += "⚡ You played it too safe with power! Although stability is important, we need power in order to mobalize the cannonball. Try balancing your power with your stability improvements.";
             } else if (gameState.stabilityLevel <= 2) {
-                message += "Your cannon was too unstable to handle the power. Start by building a strong stability foundation before adding power.";
+                message += "💨 Your cannon was too unstable to handle the power. Start by building a strong stability foundation before adding power.";
             } else {
-                message += "You were close, but your balance of power and stability wasn't quite right. Remember: Stability enables power. Build your stability first, then gradually increase power.";
+                message += "📊 You were close, but your balance of power and stability wasn't quite right. Remember: Stability enables power. Build your stability first, then gradually increase power.";
             }
             
             return message;
